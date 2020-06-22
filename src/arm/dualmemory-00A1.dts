@@ -1,0 +1,189 @@
+/*
+ * Copyright (C) 2020 Deokhwa Kim
+ *
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pinctrl/am33xx.h>
+#include <dt-bindings/board/am335x-bbw-bbb-base.h>
+
+/ {
+	compatible = "ti,beaglebone", "ti,beaglebone-black";
+	part-number = "dualmemory";
+	version = "00A1";
+
+	/* state the resources this cape uses */
+	exclusive-use =
+		/* the pin header uses */
+    "P9.24",	/* mcasp0: mcasp0_ahclkx */
+    "P9.25",	/* mcasp0: mcasp0_axr2 */
+    "P9.26",	/* mcasp0: mcasp0_fsx */
+    "P9.27",	/* mcasp0: mcasp0_aclkx */
+    "P9.28",	/* lcd: lcd_data0 */
+    "P9.29",	/* lcd: lcd_data1 */
+    "P9.30",	/* lcd: lcd_data2 */
+    "P9.31",	/* lcd: lcd_data3 */
+
+    "P9.11",    /* GPMC WAIT0 */
+    "P9.13",    /* GPMC WPN */
+    "P8.3",     /* GPMC AD6 */
+    "P8.4",     /* GPMC AD7 */
+    "P8.5",     /* GPMC AD2 */
+    "P8.6",     /* GPMC AD3 */
+    "P8.8",     /* GPMC OEN REN */
+    "P8.10",    /* GPMC WEN*/
+    "P8.11",    /* GPMC AD13*/
+    "P8.12",    /* GPMC AD12*/
+    "P8.13",    /* GPMC AD9*/
+    "P8.14",    /* GPMC AD10*/
+    "P8.15",    /* GPMC AD15*/
+    "P8.16",    /* GPMC AD14*/
+    "P8.17",    /* GPMC AD11*/
+    "P8.19",    /* GPMC AD8*/
+    "P8.22",    /* GPMC AD5*/
+    "P8.23",    /* GPMC AD4*/
+    "P8.24",    /* GPMC AD1*/
+    "P8.25",    /* GPMC AD0*/
+    "P8.26",    /* GPMC CSN0*/
+    "P8.27",    /* GPMC A8*/
+    "P8.28",    /* GPMC A10*/
+    "P8.29",    /* GPMC A9*/
+    "P8.30",    /* GPMC A11*/
+    "P8.37",    /* GPMC A12*/
+    "P8.39",    /* GPMC A6*/
+    "P8.40",    /* GPMC A7*/
+    "P8.41",    /* GPMC A4*/
+    "P8.42",    /* GPMC A5*/
+    "P8.43",    /* GPMC A2*/
+    "P8.44",    /* GPMC A3*/
+    "P8.46",    /* GPMC A1*/
+
+    "gpio0_31",
+
+    "gpmc",
+
+		"gpio0_15",
+		"gpio3_21",
+		"gpio0_14",
+		"gpio3_19",
+		"gpio3_17",
+		"gpio3_15",
+		"gpio3_16",
+		"gpio3_14";
+
+	/*
+	 * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
+	 */
+	fragment@0 {
+		target-path="/";
+		__overlay__ {
+
+			chosen {
+				overlays {
+					dualmemory-00A1 = __TIMESTAMP__;
+				};
+			};
+		};
+	};
+
+	/*
+	 * Free up the pins used by the cape from the pinmux helpers.
+	 */
+	fragment@1 {
+		target = <&ocp>;
+		__overlay__ {
+      P9_24_pinmux { status = "disabled"; };
+      P9_25_pinmux { status = "disabled"; };
+      P9_26_pinmux { status = "disabled"; };
+      P9_27_pinmux { status = "disabled"; };
+      P9_28_pinmux { status = "disabled"; };
+      P9_29_pinmux { status = "disabled"; };
+      P9_30_pinmux { status = "disabled"; };
+      P9_31_pinmux { status = "disabled"; };
+		};
+	};
+
+	fragment@2 {
+		target = <&am33xx_pinmux>;
+		__overlay__ {
+
+			debug_led_pins: pinmux_debug_led_pins {
+				pinctrl-single,pins = <
+          BONE_P9_24 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+          BONE_P9_25 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+          BONE_P9_26 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+          BONE_P9_27 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+          BONE_P9_28 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+          BONE_P9_29 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+          BONE_P9_30 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+          BONE_P9_31 (PIN_OUTPUT_PULLUP | MUX_MODE7)
+				>;
+			};
+		};
+	};
+
+
+	fragment@3 {
+		target-path="/";
+		__overlay__ {
+			test-gpio-leds-cape {
+				compatible = "gpio-leds";
+				pinctrl-names = "default";
+				pinctrl-0 = <&debug_led_pins>;
+
+        test-led1 {
+          label = "test-led1";
+          gpios = <&gpio0 15 0>;
+          linux,default-trigger = "heartbeat";
+          default-state = "on";
+        };
+        test-led2 {
+          label = "test-led2";
+          gpios = <&gpio3 21 0>;
+          linux,default-trigger = "heartbeat";
+          default-state = "on";
+        };
+        test-led3 {
+          label = "test-led3";
+          gpios = <&gpio0 14 0>;
+          linux,default-trigger = "heartbeat";
+          default-state = "on";
+        };
+        test-led4 {
+          label = "test-led4";
+          gpios = <&gpio3 19 0>;
+          linux,default-trigger = "heartbeat";
+          default-state = "on";
+        };
+        test-led5 {
+          label = "test-led5";
+          gpios = <&gpio3 17 0>;
+          linux,default-trigger = "heartbeat";
+          default-state = "on";
+        };
+        test-led6 {
+          label = "test-led6";
+          gpios = <&gpio3 16 0>;
+          linux,default-trigger = "heartbeat";
+          default-state = "on";
+        };
+				test-led7 {
+					label = "test-led7";
+					gpios = <&gpio3 15 0>;
+					linux,default-trigger = "heartbeat";
+					default-state = "on";
+				};
+				test-led8 {
+					label = "test-led8";
+					gpios = <&gpio3 14 0>;
+					linux,default-trigger = "heartbeat";
+					default-state = "on";
+				};
+
+			};
+		};
+	};
+};
