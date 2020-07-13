@@ -11,13 +11,13 @@
 #include <dt-bindings/board/am335x-bbw-bbb-base.h>
 
 / {
-	compatible = "ti,beaglebone", "ti,beaglebone-black";
-	part-number = "dualmemory";
-	version = "00A1";
+  compatible = "ti,beaglebone", "ti,beaglebone-black";
+  part-number = "dualmemory";
+  version = "00A1";
 
-	/* state the resources this cape uses */
-	exclusive-use =
-		/* the pin header uses */
+  /* state the resources this cape uses */
+  exclusive-use =
+    /* the pin header uses */
     "P9.24",	/* mcasp0: mcasp0_ahclkx */
     "P9.25",	/* mcasp0: mcasp0_axr2 */
     "P9.26",	/* mcasp0: mcasp0_fsx */
@@ -65,36 +65,35 @@
 
     "gpmc",
 
-		"gpio0_15",
-		"gpio3_21",
-		"gpio0_14",
-		"gpio3_19",
-		"gpio3_17",
-		"gpio3_15",
-		"gpio3_16",
-		"gpio3_14";
+    "gpio0_15",
+    "gpio3_21",
+    "gpio0_14",
+    "gpio3_19",
+    "gpio3_17",
+    "gpio3_15",
+    "gpio3_16",
+    "gpio3_14";
 
-	/*
-	 * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
-	 */
-	fragment@0 {
-		target-path="/";
-		__overlay__ {
+  /*
+   * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
+   */
+  fragment@0 {
+    target-path = "/";
+    __overlay__ {
+      chosen {
+        overlays {
+          dualmemory-00A1 = __TIMESTAMP__;
+        };
+      };
+    };
+  };
 
-			chosen {
-				overlays {
-					dualmemory-00A1 = __TIMESTAMP__;
-				};
-			};
-		};
-	};
-
-	/*
-	 * Free up the pins used by the cape from the pinmux helpers.
-	 */
-	fragment@1 {
-		target = <&ocp>;
-		__overlay__ {
+  /*
+   * Free up the pins used by the cape from the pinmux helpers.
+   */
+  fragment@1 {
+    target = <&ocp>;
+    __overlay__ {
       P9_24_pinmux { status = "disabled"; };
       P9_25_pinmux { status = "disabled"; };
       P9_26_pinmux { status = "disabled"; };
@@ -103,15 +102,53 @@
       P9_29_pinmux { status = "disabled"; };
       P9_30_pinmux { status = "disabled"; };
       P9_31_pinmux { status = "disabled"; };
-		};
-	};
+    };
+  };
 
-	fragment@2 {
-		target = <&am33xx_pinmux>;
-		__overlay__ {
+  fragment@2 {
+    target = <&am33xx_pinmux>;
+    __overlay__ {
+      gpmc_pins: pinmux_gpmc_pins {
+        pinctrl-single,pins = <
+          0x70 0x08       /* gpmc_wait0 */
+          0x74 0x17       /* gpmc_wpn(sem-gpio) */
+          0x94 0x08        /* gpmc_oen_ren */
+          0x98 0x08        /* gpmc_wen */
+          0x7c 0x08        /* gpmc_csn0(not used) */
+          0x40 0x17        /* gpmc_a0(csn-gpio) */
+          0x0 0x30       /* gpmc_ad0 */
+          0x4 0x30       /* gpmc_ad1 */
+          0x8 0x30       /* gpmc_ad2 */
+          0xc 0x30       /* gpmc_ad3 */
+          0x10 0x30       /* gpmc_ad4 */
+          0x14 0x30       /* gpmc_ad5 */
+          0x18 0x30       /* gpmc_ad6 */
+          0x1c 0x30       /* gpmc_ad7 */
+          0x20 0x30       /* gpmc_ad8 */
+          0x24 0x30       /* gpmc_ad9 */
+          0x28 0x30       /* gpmc_ad10 */
+          0x2c 0x30       /* gpmc_ad11 */
+          0x30 0x30       /* gpmc_ad12 */
+          0x34 0x30       /* gpmc_ad13 */
+          0x38 0x30       /* gpmc_ad14 */
+          0x3c 0x30       /* gpmc_ad15 */
+          0xa4 0x09       /* lcd_data1(gpmc_a1) */
+          0xa8 0x09       /* lcd_data2(gpmc_a2) */
+          0xac 0x09       /* lcd_data3(gpmc_a3) */
+          0xb0 0x09       /* lcd_data4(gpmc_a4) */
+          0xb4 0x09       /* lcd_data5(gpmc_a5) */
+          0xb8 0x09       /* lcd_data6(gpmc_a6) */
+          0xbc 0x09       /* lcd_data7(gpmc_a7) */
+          0xe0 0x09       /* lcd_vsync(gpmc_a8) */
+          0xe4 0x09       /* lcd_hsync(gpmc_a9) */
+          0xe8 0x09       /* lcd_pclk(gpmc_a10) */
+          0xec 0x09       /* lcd_ac_bias_en(gpmc_a11) */
+          0xc0 0x09       /* lcd_data8(gpmc_a12) */
+        >;
+      };
 
-			debug_led_pins: pinmux_debug_led_pins {
-				pinctrl-single,pins = <
+      debug_led_pins: pinmux_debug_led_pins {
+        pinctrl-single,pins = <
           BONE_P9_24 (PIN_OUTPUT_PULLUP | MUX_MODE7)
           BONE_P9_25 (PIN_OUTPUT_PULLUP | MUX_MODE7)
           BONE_P9_26 (PIN_OUTPUT_PULLUP | MUX_MODE7)
@@ -120,19 +157,19 @@
           BONE_P9_29 (PIN_OUTPUT_PULLUP | MUX_MODE7)
           BONE_P9_30 (PIN_OUTPUT_PULLUP | MUX_MODE7)
           BONE_P9_31 (PIN_OUTPUT_PULLUP | MUX_MODE7)
-				>;
-			};
-		};
-	};
+        >;
+      };
+    };
+  };
 
 
-	fragment@3 {
-		target-path="/";
-		__overlay__ {
-			test-gpio-leds-cape {
-				compatible = "gpio-leds";
-				pinctrl-names = "default";
-				pinctrl-0 = <&debug_led_pins>;
+  fragment@3 {
+    target-path="/";
+    __overlay__ {
+      test-gpio-leds-cape {
+        compatible = "gpio-leds";
+        pinctrl-names = "default";
+        pinctrl-0 = <&debug_led_pins>;
 
         test-led1 {
           label = "test-led1";
@@ -170,20 +207,96 @@
           linux,default-trigger = "heartbeat";
           default-state = "on";
         };
-				test-led7 {
-					label = "test-led7";
-					gpios = <&gpio3 15 0>;
-					linux,default-trigger = "heartbeat";
-					default-state = "on";
-				};
-				test-led8 {
-					label = "test-led8";
-					gpios = <&gpio3 14 0>;
-					linux,default-trigger = "heartbeat";
-					default-state = "on";
-				};
+        test-led7 {
+          label = "test-led7";
+          gpios = <&gpio3 15 0>;
+          linux,default-trigger = "heartbeat";
+          default-state = "on";
+        };
+        test-led8 {
+          label = "test-led8";
+          gpios = <&gpio3 14 0>;
+          linux,default-trigger = "heartbeat";
+          default-state = "on";
+        };
+      };
+    };
+  };
 
-			};
-		};
-	};
+  fragment@4 {
+    target = <&gpmc>;
+    depth = <1>;    /* only create devices on depth 1 */
+
+    /* stupid warnings */
+    #address-cells = <1>;
+    #size-cells = <1>;
+    __overlay__ {
+
+      status = "okay";
+
+      #address-cells = <2>;
+      #size-cells = <1>;
+
+      pinctrl-names = "default";
+      pinctrl-0 = <&gpmc_pins>;
+
+      /*gpmc,num-waitpins = <1>; */
+      /*gpmc,num-cs = <2>;*/
+      /* chip select ranges */
+      ranges = <0 0 0x08000000 0x00100000>;
+
+      nor{
+        compatible = "dualport_ram";
+        status = "okay";
+        reg = <0 0 0x00100000>;
+
+
+        /*gpmc,burst-write;*/
+        /*gpmc,burst-read;*/
+        /*gpmc,burst-wrap;*/
+        bank-width = <2>;
+        gpmc,cs-on-ns = <0>;
+        gpmc,cs-rd-off-ns = <100>;
+        gpmc,cs-wr-off-ns = <40>;
+
+        gpmc,adv-on-ns = <0>;       /* CONFIG3 */
+        gpmc,adv-rd-off-ns = <20>;
+        gpmc,adv-wr-off-ns = <20>;
+
+        gpmc,we-on-ns = <20>;       /* CONFIG4 */
+        gpmc,we-off-ns = <40>;
+
+        gpmc,oe-on-ns = <20>;
+        gpmc,oe-off-ns = <100>;
+
+        gpmc,page-burst-access-ns = <20>;   /* CONFIG 5 */
+        gpmc,access-ns = <80>;
+        gpmc,rd-cycle-ns = <120>;
+        gpmc,wr-cycle-ns = <60>;
+        gpmc,wr-access-ns = <40>;       /* CONFIG 6 */
+        gpmc,wr-data-mux-bus-ns = <20>;
+
+        /*gpmc,sync-read;     /* GPMC_CONFIG1_READTYPE_ASYNC */
+        /*gpmc,sync-write;        /* GPMC_CONFIG1_WRITETYPE_ASYNC */
+        /*gpmc,clk-activation-ns = <0>;   /* GPMC_CONFIG1_CLKACTIVATIONTIME(2) */
+        gpmc,device-width = <2>;
+        /* gpmc,burst-length = <16>;  
+           gpmc,burst-read;
+           gpmc,burst-write;
+        /*gpmc,mux-add-data = <2>;    /* GPMC_CONFIG1_MUXTYPE(2) */
+
+        /*gpmc,sync-clk-ps = <20000>; /* CONFIG2 */
+
+
+        /*gpmc,bus-turnaround-ns = <40>;*/      /* CONFIG6:3:0 = 4 */
+        /*gpmc,cycle2cycle-samecsen;*/      /* CONFIG6:7 = 1 */
+        /*gpmc,cycle2cycle-delay-ns = <40>;*/   /* CONFIG6:11:8 = 4 */
+
+        /* not using dma engine yet, but we can get the channel number here */
+        dmas = <&edma 1>;
+        dma-names = "dualport";
+      };
+    };
+  }; // fragma@4
+
 };
